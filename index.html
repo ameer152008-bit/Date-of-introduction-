@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ذكرى حبنا 💜</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background-image: url('./bg-gingham.jpg');
+      background-size: 320px 320px;
+      background-repeat: repeat;
+      overflow-x: hidden;
+    }
+
+    /* ===== INTRO ===== */
+    #intro {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .intro-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 32px;
+      padding: 52px 64px 44px;
+      box-shadow: 0 24px 60px rgba(130,180,240,0.22), 0 4px 16px rgba(130,180,240,0.12);
+    }
+    .intro-pre {
+      font-size: 0.9rem;
+      color: #6fa3d0;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .intro-title {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #2c5f8a;
+      text-align: center;
+    }
+    .cloud-btn {
+      position: relative;
+      background: #fff;
+      color: #3a6b9e;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 32px 60px;
+      border: none;
+      border-radius: 100px 100px 80px 80px;
+      cursor: pointer;
+      box-shadow: 0 14px 36px rgba(130,180,240,0.3), inset 0 -5px 0 rgba(130,180,240,0.2);
+      animation: cloudFloat 3.2s ease-in-out infinite;
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+    }
+    .cb-puff {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 6px 18px rgba(130,180,240,0.2);
+    }
+    .cb-left  { width: 68px; height: 68px; top: -28px; left: 32px; }
+    .cb-right { width: 80px; height: 80px; top: -36px; right: 32px; }
+    .cb-text { position: relative; z-index: 1; }
+    .cloud-btn:hover  { transform: scale(1.04); }
+    .cloud-btn:active { transform: scale(0.97); }
+    @keyframes cloudFloat {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    /* ===== MAIN ===== */
+    #main {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px 80px;
+      min-height: 100vh;
+      position: relative;
+    }
+    #main.visible { display: flex; }
+
+    .page-title {
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 900;
+      color: #2c5f8a;
+      text-shadow: 0 2px 12px rgba(255,255,255,0.9);
+      margin: 0 0 36px;
+      text-align: center;
+    }
+    .section-gap { margin-top: 48px; width: 100%; display: flex; justify-content: center; }
+
+    /* ===== FLOATING MUSIC PLAYER ===== */
+    .music-float {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+    }
+    .music-card {
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 12px 36px rgba(100,160,220,0.22);
+      min-width: 220px;
+      position: relative;
+      overflow: hidden;
+    }
+    .music-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .music-icon { font-size: 1.3rem; }
+    .music-title { font-size: 0.85rem; font-weight: 700; color: #2c5f8a; }
+    .music-controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .music-btn {
+      background: linear-gradient(135deg, #6fa3d0, #4a87bc);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 7px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      width: 100%;
+    }
+    .music-btn:hover { opacity: 0.9; transform: scale(1.03); }
+    .music-btn.playing { background: linear-gradient(135deg, #e6a0c4, #c06fa0); }
+    .vol-wrap { display: flex; align-items: center; gap: 6px; width: 100%; font-size: 0.85rem; }
+    .vol-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 4px;
+      background: linear-gradient(to right, #6fa3d0 0%, #d0e8f8 100%);
+      outline: none;
+      cursor: pointer;
+    }
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #3a6b9e;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(58,107,158,0.3);
+    }
+    .music-notes {
+      position: absolute; top: 0; right: 0;
+      pointer-events: none; overflow: hidden;
+      width: 60px; height: 100%;
+    }
+    .note {
+      position: absolute;
+      font-size: 1.1rem; right: 8px; top: 100%;
+      opacity: 0; animation: noteFloat 2s ease-in-out infinite; color: #6fa3d0;
+    }
+    .note:nth-child(1) { right: 6px; animation-delay: 0s; }
+    .note:nth-child(2) { right: 18px; animation-delay: 0.4s; }
+    .note:nth-child(3) { right: 10px; animation-delay: 0.8s; }
+    .note:nth-child(4) { right: 22px; animation-delay: 1.2s; }
+    @keyframes noteFloat {
+      0%   { transform: translateY(0);    opacity: 0; }
+      20%  { opacity: 0.9; }
+      80%  { opacity: 0.5; }
+      100% { transform: translateY(-80px); opacity: 0; }
+    }
+
+    /* ===== ARC GRID ===== */
+    .arc-grid {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 44px;
+    }
+    .side-col { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .frame-box {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    .frame-box:hover {
+      z-index: 10;
+      transform: scale(1.07) rotate(0deg) !important;
+      filter: drop-shadow(0 10px 24px rgba(100,160,220,0.4));
+    }
+    .frame-border {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: fill; border-radius: 14px; z-index: 2; pointer-events: none;
+    }
+    .frame-inner {
+      position: relative; z-index: 3; border-radius: 8px; overflow: hidden;
+    }
+    /* الصورة داخل الإطار */
+    .frame-inner img.slot-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 8px;
+    }
+    /* إطار فارغ عند غياب الصورة */
+    .slot-empty {
+      background: rgba(255,255,255,0.45);
+      border-radius: 8px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: rgba(111,163,208,0.5);
+    }
+    .sf { width: 145px; height: 145px; }
+    .sf .frame-inner { width: 90px; height: 90px; }
+    .rotate-neg-12 { transform: rotate(-12deg); }
+    .rotate-neg-15 { transform: rotate(-15deg); }
+    .rotate-0      { transform: rotate(0deg); }
+    .rotate-pos-12 { transform: rotate(12deg); }
+    .rotate-pos-15 { transform: rotate(15deg); }
+    .delay-0 { animation: floatA 5.5s ease-in-out infinite; }
+    .delay-1 { animation: floatB 6.2s ease-in-out infinite 0.6s; }
+    .delay-2 { animation: floatC 5.0s ease-in-out infinite 1.1s; }
+    .right-col .delay-0 { animation: floatD 5.8s ease-in-out infinite; }
+    .right-col .delay-1 { animation: floatE 6.5s ease-in-out infinite 0.4s; }
+    .right-col .delay-2 { animation: floatF 5.2s ease-in-out infinite 0.9s; }
+    @keyframes floatA { 0%,100%{transform:translateY(0) rotate(-12deg)} 50%{transform:translateY(-7px) rotate(-10deg)} }
+    @keyframes floatB { 0%,100%{transform:translateY(0) rotate(0deg)}   50%{transform:translateY(-9px) rotate(1deg)}   }
+    @keyframes floatC { 0%,100%{transform:translateY(0) rotate(15deg)}  50%{transform:translateY(-6px) rotate(13deg)}  }
+    @keyframes floatD { 0%,100%{transform:translateY(0) rotate(12deg)}  50%{transform:translateY(-8px) rotate(10deg)}  }
+    @keyframes floatE { 0%,100%{transform:translateY(0) rotate(0deg)}   50%{transform:translateY(-7px) rotate(-1deg)}  }
+    @keyframes floatF { 0%,100%{transform:translateY(0) rotate(-15deg)} 50%{transform:translateY(-9px) rotate(-13deg)} }
+
+    /* Center video */
+    .center-col { display: flex; flex-direction: column; align-items: center; }
+    .center-video-wrap {
+      position: relative;
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.9), 0 0 0 8px rgba(130,180,240,0.35), 0 20px 50px rgba(100,160,220,0.3);
+      animation: centerGlow 4s ease-in-out infinite;
+      width: 220px; height: 300px;
+    }
+    .center-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    @keyframes centerGlow {
+      0%,100% { box-shadow: 0 0 0 4px rgba(255,255,255,.9), 0 0 0 8px rgba(130,180,240,.35), 0 20px 50px rgba(100,160,220,.3); }
+      50%     { box-shadow: 0 0 0 4px rgba(255,255,255,.95), 0 0 0 10px rgba(130,180,240,.5), 0 26px 60px rgba(100,160,220,.45); }
+    }
+    .vid-dots {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 7px; z-index: 5;
+    }
+    .vid-dot {
+      width: 9px; height: 9px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.55); cursor: pointer;
+      transition: background 0.25s, transform 0.25s; padding: 0;
+    }
+    .vid-dot.active { background: #fff; transform: scale(1.3); }
+
+    /* ===== GLASS PANEL ===== */
+    .glass-panel {
+      width: min(560px, 94vw);
+      background: rgba(255,255,255,0.62);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(255,255,255,0.9);
+      border-radius: 32px; padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(100,160,220,0.18), inset 0 1px 0 rgba(255,255,255,0.95);
+      display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center;
+    }
+    .gp-date-block { display: flex; align-items: center; gap: 16px; }
+    .gp-heart { font-size: 1.5rem; }
+    .gp-date-text { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .gp-label { font-size: 0.78rem; font-weight: 700; color: #6fa3d0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .gp-date { font-size: clamp(1.9rem,5vw,2.7rem); font-weight: 900; color: #2c5f8a; letter-spacing: 0.04em; line-height: 1; }
+    .gp-divider { width: 50%; height: 1.5px; background: linear-gradient(90deg,transparent,rgba(130,180,240,.5),transparent); }
+    .gp-cd-label { font-size: 0.88rem; font-weight: 700; color: #4a87bc; margin: 0; }
+    .gp-countdown { display: flex; align-items: center; gap: 6px; }
+    .cd-group { display: flex; align-items: center; gap: 6px; }
+    .cd-unit {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.75); border: 1.5px solid rgba(130,180,240,0.3);
+      border-radius: 14px; padding: 12px 16px; min-width: 64px;
+      box-shadow: 0 4px 12px rgba(100,160,220,0.1);
+    }
+    .cd-num { font-size: 1.8rem; font-weight: 900; color: #2c5f8a; line-height: 1; font-variant-numeric: tabular-nums; }
+    .cd-lbl { font-size: 0.65rem; font-weight: 700; color: #6fa3d0; letter-spacing: 0.06em; }
+    .cd-colon { font-size: 1.8rem; font-weight: 900; color: #6fa3d0; margin-bottom: 18px; line-height: 1; }
+
+    /* ===== TYPEWRITER CARD ===== */
+    .tw-card {
+      width: min(560px, 94vw);
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 28px; padding: 32px 36px;
+      box-shadow: 0 20px 56px rgba(100,160,220,0.16);
+      display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center;
+    }
+    .tw-header { display: flex; align-items: center; gap: 10px; }
+    .tw-icon { font-size: 1.6rem; }
+    .tw-title { font-size: 1.1rem; font-weight: 800; color: #2c5f8a; }
+    .tw-text {
+      font-size: 1.05rem; color: #3a6b9e; line-height: 2;
+      min-height: 80px; font-weight: 500; text-align: right; width: 100%;
+    }
+    .tw-placeholder { color: #9bbfd8; font-style: italic; }
+    .tw-cursor {
+      display: inline-block; color: #6fa3d0; font-weight: 900;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .tw-btn {
+      background: linear-gradient(135deg, #6fa3d0, #4a87bc);
+      color: #fff; border: none; border-radius: 20px;
+      padding: 10px 28px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      box-shadow: 0 6px 18px rgba(74,135,188,0.3);
+    }
+    .tw-btn:hover { opacity: 0.9; transform: scale(1.04); }
+
+    /* ===== TIMELINE ===== */
+    .timeline-wrap { width: min(720px, 96vw); display: flex; flex-direction: column; align-items: center; }
+    .section-title {
+      font-size: 1.5rem; font-weight: 900; color: #2c5f8a;
+      text-shadow: 0 2px 8px rgba(255,255,255,0.8); margin: 0 0 32px; text-align: center;
+    }
+    .timeline {
+      position: relative; width: 100%; display: flex;
+      flex-direction: column; gap: 28px; padding: 0 16px;
+    }
+    .tl-line {
+      position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 3px; background: linear-gradient(to bottom, rgba(130,180,240,0.2), rgba(130,180,240,0.6), rgba(130,180,240,0.2));
+      border-radius: 2px; z-index: 0;
+    }
+    .tl-item { position: relative; display: flex; align-items: center; z-index: 1; width: 100%; }
+    .tl-dot {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); border: 2.5px solid rgba(130,180,240,0.5);
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+      box-shadow: 0 4px 16px rgba(100,160,220,0.2); z-index: 2; flex-shrink: 0;
+    }
+    .tl-left  { justify-content: flex-start;  padding-right: calc(50% + 36px); }
+    .tl-right { justify-content: flex-end;    padding-left:  calc(50% + 36px); }
+    .tl-card {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255,255,255,0.9); border-radius: 18px;
+      padding: 16px 20px; box-shadow: 0 8px 28px rgba(100,160,220,0.14);
+      max-width: 100%; text-align: right;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .tl-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(100,160,220,0.24); }
+    .tl-date { font-size: 0.72rem; font-weight: 700; color: #6fa3d0; letter-spacing: 0.06em; display: block; margin-bottom: 4px; }
+    .tl-title { font-size: 0.98rem; font-weight: 800; color: #2c5f8a; margin: 0 0 6px; }
+    .tl-desc  { font-size: 0.85rem; color: #4a87bc; margin: 0; line-height: 1.6; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 680px) {
+      .arc-grid { gap: 10px; }
+      .sf { width: 110px; height: 110px; }
+      .sf .frame-inner { width: 68px; height: 68px; }
+      .center-video-wrap { width: 170px; height: 230px; }
+      .glass-panel, .tw-card { padding: 24px 18px; }
+      .cd-unit { padding: 10px 11px; min-width: 52px; }
+      .cd-num { font-size: 1.4rem; }
+      .tl-line { display: none; }
+      .tl-item { justify-content: center !important; padding: 0 !important; flex-direction: row-reverse; align-items: center; gap: 10px; }
+      .tl-dot { position: static; transform: none; margin-left: 10px; flex-shrink: 0; }
+      .tl-card { flex: 1; }
+      .music-float { bottom: 16px; left: 12px; }
+      .music-card { min-width: 180px; }
+      .intro-card { padding: 36px 24px 32px; }
+      .intro-title { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ INTRO ══ -->
+  <div id="intro">
+    <div class="intro-card">
+      <p class="intro-pre">لكِ وحدكِ</p>
+      <h1 class="intro-title">ذكرى حبنا 💜</h1>
+      <button class="cloud-btn" onclick="enterMain()">
+        <span class="cb-puff cb-left"></span>
+        <span class="cb-puff cb-right"></span>
+        <span class="cb-text">اضغطي داخل الغيمة ☁️</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ MAIN ══ -->
+  <div id="main">
+
+    <!-- Floating music player -->
+    <div class="music-float">
+      <div class="music-card">
+        <audio id="bgAudio" loop src="https://cdn.pixabay.com/audio/2022/10/25/audio_236ae48edd.mp3"></audio>
+        <div class="music-header">
+          <span class="music-icon" id="musicIcon">🎶</span>
+          <span class="music-title">موسيقى رومانسية</span>
+        </div>
+        <div class="music-controls">
+          <button class="music-btn" id="musicBtn" onclick="toggleMusic()">▶ تشغيل</button>
+          <div class="vol-wrap">
+            <span>🔈</span>
+            <input type="range" min="0" max="1" step="0.05" value="0.5" class="vol-slider" oninput="setVol(this.value)" />
+            <span>🔊</span>
+          </div>
+        </div>
+        <div class="music-notes" id="musicNotes" style="display:none" aria-hidden="true">
+          <span class="note">♪</span>
+          <span class="note">♫</span>
+          <span class="note">♩</span>
+          <span class="note">♬</span>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="page-title">ذكرى حبنا الجميلة 💜</h1>
+
+    <!-- Arc grid -->
+    <!--
+      ══════════════════════════════════════════════
+      لإضافة صورك الشخصية داخل الإطارات:
+      ضعي هذه الملفات في نفس مجلد index.html:
+        photo1.jpg ← الإطار الأول  (أعلى يسار)
+        photo2.jpg ← الإطار الثاني (وسط يسار)
+        photo3.jpg ← الإطار الثالث (أسفل يسار)
+        photo4.jpg ← الإطار الرابع (أعلى يمين)
+        photo5.jpg ← الإطار الخامس (وسط يمين)
+        photo6.jpg ← الإطار السادس (أسفل يمين)
+      ══════════════════════════════════════════════
+    -->
+    <div class="arc-grid">
+      <div class="side-col">
+
+        <!-- الإطار الأول (أعلى يسار) → photo1.jpg -->
+        <div class="frame-box sf rotate-neg-12 delay-0">
+          <img src="./frame1.jpg" class="frame-border" alt="" />
+          <div class="frame-inner">
+            <img src="./photo1.jpg" class="slot-photo" alt="صورة 1"
+                 onerror="this.outerHTML='<div class=\'slot-empty\'>📷</div>'" />
+          </div>
+        </div>
+
+        <!-- الإطار الثاني (وسط يسار) → photo2.jpg -->
+        <div class="frame-box sf rotate-0 delay-1">
+          <img src="./frame2.jpg" class="frame-border" alt="" />
+          <div class="frame-inner">
+            <img src="./photo2.jpg" class="slot-photo" alt="صورة 2"
+                 onerror="this.outerHTML='<div class=\'slot-empty\'>📷</div>'" />
+          </div>
+        </div>
+
+        <!-- الإطار الثالث (أسفل يسار) → photo3.jpg -->
+        <div class="frame-box sf rotate-pos-15 delay-2">
+          <img src="./frame1.jpg" class="frame-border" alt="" />
+          <div class="frame-inner">
+            <img src="./photo3.jpg" class="slot-photo" alt="صورة 3"
+                 onerror="this.outerHTML='<div class=\'slot-empty\'>📷</div>'" />
+          </div>
+        </div>
+
+      </div>
+
+      <div class="center-col">
+        <div class="center-video-wrap">
+          <video id="centerVideo" autoplay muted playsinline class="center-video"></video>
+          <div class="vid-dots" id="vidDots"></div>
+        </div>
+      </div>
+
+      <div class="side-col right-col">
+
+        <!-- الإطار الرابع (أعلى يمين) → photo4.jpg -->
+        <div class="frame-box sf rotate-pos-12 delay-0">
+          <img src="./frame2.jpg" class="frame-border" alt="" />
+          <div class="frame-inner">
+            <img src="./photo4.jpg" class="slot-photo" alt="صورة 4"
+                 onerror="this.outerHTML='<div class=\'slot-empty\'>📷</div>'" />
+          </div>
+        </div>
+
+        <!-- الإطار الخامس (وسط يمين) → photo5.jpg -->
+        <div class="frame-box sf rotate-0 delay-1">
+          <img src="./frame1.jpg" class="frame-border" alt="" />
+          <div class="frame-inner">
+            <img src="./photo5.jpg" class="slot-photo" alt="صورة 5"
+                 onerror="this.outerHTML='<div class=\'slot-empty\'>📷</div>'" />
+          </div>
+        </div>
+
+        <!-- الإطار السادس (أسفل يمين) → photo6.jpg -->
+        <div class="frame-box sf rotate-neg-15 delay-2">
+          <img src="./frame2.jpg" class="frame-border" alt="" />
+          <div class="frame-inner">
+            <img src="./photo6.jpg" class="slot-photo" alt="صورة 6"
+                 onerror="this.outerHTML='<div class=\'slot-empty\'>📷</div>'" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Countdown glass -->
+    <div class="glass-panel">
+      <div class="gp-date-block">
+        <span class="gp-heart">💜</span>
+        <div class="gp-date-text">
+          <span class="gp-label">تاريخ تعارفنا</span>
+          <span class="gp-date">٢٠٢٥ / ٦ / ١١</span>
+        </div>
+        <span class="gp-heart">💜</span>
+      </div>
+      <div class="gp-divider"></div>
+      <p class="gp-cd-label">العد التنازلي حتى ذكرانا القادمة</p>
+      <div class="gp-countdown" id="countdown"></div>
+    </div>
+
+    <!-- Typewriter love letter -->
+    <div class="section-gap">
+      <div class="tw-card">
+        <div class="tw-header">
+          <span class="tw-icon">💌</span>
+          <span class="tw-title">رسالة لكِ</span>
+        </div>
+        <p class="tw-text" dir="rtl" id="twText">
+          <span class="tw-placeholder">اضغطي لتقرئي رسالتكِ 💜</span>
+        </p>
+        <button class="tw-btn" id="twBtn" onclick="handleTypewriter()">✉️ افتحي الرسالة</button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="section-gap">
+      <div class="timeline-wrap">
+        <h2 class="section-title">📅 لحظاتنا معاً</h2>
+        <div class="timeline" id="timeline">
+          <div class="tl-line"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ── Videos ── */
+    const VIDEOS = ['./video1.mp4', './video2.mp4', './video3.mp4'];
+    let vidIdx = 0;
+
+    function enterMain() {
+      document.getElementById('intro').style.display = 'none';
+      document.getElementById('main').classList.add('visible');
+      loadVideo(0);
+      buildDots();
+      startCountdown();
+      buildTimeline();
+    }
+
+    function loadVideo(i) {
+      vidIdx = i;
+      const vid = document.getElementById('centerVideo');
+      vid.src = VIDEOS[i];
+      vid.play().catch(() => {});
+      vid.onended = () => loadVideo((i + 1) % VIDEOS.length);
+      document.querySelectorAll('.vid-dot').forEach((d, j) => d.classList.toggle('active', j === i));
+    }
+
+    function buildDots() {
+      const wrap = document.getElementById('vidDots');
+      VIDEOS.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'vid-dot' + (i === 0 ? ' active' : '');
+        btn.setAttribute('aria-label', 'فيديو ' + (i + 1));
+        btn.onclick = () => loadVideo(i);
+        wrap.appendChild(btn);
+      });
+    }
+
+    /* ── Music ── */
+    let playing = false;
+    function toggleMusic() {
+      const a = document.getElementById('bgAudio');
+      const btn = document.getElementById('musicBtn');
+      const icon = document.getElementById('musicIcon');
+      const notes = document.getElementById('musicNotes');
+      playing = !playing;
+      if (playing) {
+        a.play().catch(() => {});
+        btn.textContent = '⏸ إيقاف';
+        btn.classList.add('playing');
+        icon.textContent = '🎵';
+        notes.style.display = 'block';
+      } else {
+        a.pause();
+        btn.textContent = '▶ تشغيل';
+        btn.classList.remove('playing');
+        icon.textContent = '🎶';
+        notes.style.display = 'none';
+      }
+    }
+    function setVol(v) {
+      document.getElementById('bgAudio').volume = parseFloat(v);
+    }
+
+    /* ── Countdown ── */
+    const NEXT_611 = new Date('2027-06-11T00:00:00').getTime();
+    function calcCountdown() {
+      const diff = NEXT_611 - Date.now();
+      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return {
+        days:    Math.floor(diff / 86400000),
+        hours:   Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000),
+      };
+    }
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function renderCountdown() {
+      const t = calcCountdown();
+      const items = [
+        { n: pad(t.days),    l: 'يوم' },
+        { n: pad(t.hours),   l: 'ساعة' },
+        { n: pad(t.minutes), l: 'دقيقة' },
+        { n: pad(t.seconds), l: 'ثانية' },
+      ];
+      const wrap = document.getElementById('countdown');
+      wrap.innerHTML = items.map((item, i) => `
+        <span class="cd-group">
+          <span class="cd-unit">
+            <span class="cd-num">${item.n}</span>
+            <span class="cd-lbl">${item.l}</span>
+          </span>
+          ${i < items.length - 1 ? '<span class="cd-colon">:</span>' : ''}
+        </span>
+      `).join('');
+    }
+
+    function startCountdown() {
+      renderCountdown();
+      setInterval(renderCountdown, 1000);
+    }
+
+    /* ── Typewriter ── */
+    const LOVE_MESSAGE = 'منذ اليوم الأول اللي تعرّفت عليكِ فيه، شعرت إن قلبي وجد مكانه الصح ✨ كل يوم بيجي أحب أكثر، وكل لحظة معكِ تصبح ذكرى لا تُنسى 💜 أنتِ أجمل شيء حصلي في هذه الحياة 🌸';
+    let twIdx = 0, twTimer = null, twStarted = false;
+
+    function handleTypewriter() {
+      if (twTimer) clearInterval(twTimer);
+      twIdx = 0;
+      twStarted = true;
+      const text = document.getElementById('twText');
+      const btn = document.getElementById('twBtn');
+      text.innerHTML = '<span class="tw-cursor">|</span>';
+      btn.textContent = '⏸ جاري الكتابة...';
+      btn.disabled = true;
+      twTimer = setInterval(() => {
+        if (twIdx >= LOVE_MESSAGE.length) {
+          clearInterval(twTimer);
+          text.innerHTML = LOVE_MESSAGE;
+          btn.textContent = '🔁 أعيدي القراءة';
+          btn.disabled = false;
+          return;
+        }
+        text.innerHTML = LOVE_MESSAGE.slice(0, ++twIdx) + '<span class="tw-cursor">|</span>';
+      }, 55);
+    }
+
+    /* ── Timeline ── */
+    const TIMELINE = [
+      { date: '٢٠٢٥/٦/١١', icon: '🌸', title: 'أول لقاء',       desc: 'اليوم الذي بدأت فيه قصتنا الجميلة' },
+      { date: '٢٠٢٥/٦/١٢', icon: '💬', title: 'أول محادثة',     desc: 'كلام ما انتهى وضحكات ما توقفت' },
+      { date: '٢٠٢٥/٦/١٤', icon: '💜', title: 'أول اعتراف',     desc: 'لحظة قلت فيها كل اللي في قلبي' },
+      { date: '٢٠٢٥/٦/٢٠', icon: '✨', title: 'ذكرى أسبوع',     desc: 'أسبوع كامل من السعادة والمشاعر الجميلة' },
+      { date: '٢٠٢٥/٧/١١', icon: '🎂', title: 'شهر كامل',       desc: 'شهر من الذكريات الجميلة التي لا تُنسى' },
+      { date: '٢٠٢٦/٦/١١', icon: '🎉', title: 'ذكرى السنة الأولى', desc: 'سنة كاملة من الحب والتفاهم والسعادة' },
+    ];
+
+    function buildTimeline() {
+      const tl = document.getElementById('timeline');
+      TIMELINE.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'tl-item ' + (i % 2 === 0 ? 'tl-left' : 'tl-right');
+        div.innerHTML = `
+          <div class="tl-dot">${item.icon}</div>
+          <div class="tl-card">
+            <span class="tl-date">${item.date}</span>
+            <h3 class="tl-title">${item.title}</h3>
+            <p class="tl-desc">${item.desc}</p>
+          </div>`;
+        tl.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
