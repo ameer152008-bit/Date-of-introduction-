@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>ذكرى حبنا</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: url('assets/bg.jpg');
+      background-size: 320px 320px;
+      background-repeat: repeat;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== INTRO ===== */
+    #intro {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .intro-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 32px;
+      padding: 52px 64px 44px;
+      box-shadow: 0 24px 60px rgba(130,180,240,0.22), 0 4px 16px rgba(130,180,240,0.12);
+    }
+    .intro-pre {
+      font-size: 0.9rem;
+      color: #6fa3d0;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .intro-title {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: #2c5f8a;
+      text-align: center;
+    }
+    .cloud-btn {
+      position: relative;
+      background: #fff;
+      color: #3a6b9e;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 32px 60px;
+      border: none;
+      border-radius: 100px 100px 80px 80px;
+      cursor: pointer;
+      box-shadow: 0 14px 36px rgba(130,180,240,0.3), inset 0 -5px 0 rgba(130,180,240,0.2);
+      animation: cloudFloat 3.2s ease-in-out infinite;
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-top: 8px;
+    }
+    .cb-puff {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 6px 18px rgba(130,180,240,0.2);
+    }
+    .cb-left  { width: 68px; height: 68px; top: -28px; left: 32px; }
+    .cb-right { width: 80px; height: 80px; top: -36px; right: 32px; }
+    .cb-text  { position: relative; z-index: 1; }
+    .cloud-btn:hover  { transform: scale(1.04); }
+    .cloud-btn:active { transform: scale(0.97); }
+    @keyframes cloudFloat {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-12px); }
+    }
+
+    /* ===== MAIN ===== */
+    #main {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 16px 100px;
+      min-height: 100vh;
+      position: relative;
+    }
+    .page-title {
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-weight: 900;
+      color: #2c5f8a;
+      text-shadow: 0 2px 12px rgba(255,255,255,0.9);
+      margin-bottom: 36px;
+      text-align: center;
+    }
+    .section-gap { margin-top: 48px; width: 100%; display: flex; justify-content: center; }
+
+    /* ===== MUSIC PLAYER ===== */
+    .music-float {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+    }
+    .music-card {
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 12px 36px rgba(100,160,220,0.22);
+      min-width: 220px;
+      position: relative;
+      overflow: hidden;
+    }
+    .music-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .music-icon  { font-size: 1.3rem; }
+    .music-title { font-size: 0.85rem; font-weight: 700; color: #2c5f8a; }
+    .music-controls { display: flex; flex-direction: column; gap: 10px; }
+    .music-btn {
+      background: linear-gradient(135deg, #6fa3d0, #4a87bc);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 7px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      width: 100%;
+    }
+    .music-btn:hover { opacity: 0.9; transform: scale(1.03); }
+    .music-btn.playing { background: linear-gradient(135deg, #e6a0c4, #c06fa0); }
+    .vol-wrap { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+    .vol-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 4px;
+      background: linear-gradient(to right, #6fa3d0 50%, #d0e8f8 50%);
+      outline: none;
+      cursor: pointer;
+    }
+    .vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #3a6b9e;
+      cursor: pointer;
+    }
+    .music-notes { position: absolute; top: 0; right: 0; pointer-events: none; overflow: hidden; width: 60px; height: 100%; }
+    .note {
+      position: absolute;
+      font-size: 1.1rem;
+      right: 8px;
+      top: 100%;
+      opacity: 0;
+      animation: noteFloat 2s ease-in-out infinite;
+      color: #6fa3d0;
+    }
+    .note:nth-child(2) { right: 18px; }
+    .note:nth-child(4) { right: 22px; }
+    @keyframes noteFloat {
+      0%   { transform: translateY(0);    opacity: 0; }
+      20%  { opacity: 0.9; }
+      80%  { opacity: 0.5; }
+      100% { transform: translateY(-80px); opacity: 0; }
+    }
+
+    /* ===== ARC GRID ===== */
+    .arc-grid {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 44px;
+    }
+    .side-col { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .frame-box {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      width: 145px; height: 145px;
+    }
+    .frame-box:hover {
+      z-index: 10;
+      filter: drop-shadow(0 10px 24px rgba(100,160,220,0.4));
+    }
+    .frame-border {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: fill;
+      border-radius: 14px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .frame-inner {
+      position: relative;
+      z-index: 3;
+      border-radius: 8px;
+      overflow: hidden;
+      width: 90px; height: 90px;
+      background: rgba(255,255,255,0.45);
+    }
+    .rotate-neg-12 { animation: floatA 5.5s ease-in-out infinite; }
+    .rotate-0-a   { animation: floatB 6.2s ease-in-out infinite 0.6s; }
+    .rotate-pos-15 { animation: floatC 5.0s ease-in-out infinite 1.1s; }
+    .rotate-pos-12 { animation: floatD 5.8s ease-in-out infinite; }
+    .rotate-0-b   { animation: floatE 6.5s ease-in-out infinite 0.4s; }
+    .rotate-neg-15 { animation: floatF 5.2s ease-in-out infinite 0.9s; }
+    @keyframes floatA { 0%,100%{transform:translateY(0) rotate(-12deg)} 50%{transform:translateY(-7px) rotate(-10deg)} }
+    @keyframes floatB { 0%,100%{transform:translateY(0) rotate(0deg)}   50%{transform:translateY(-9px) rotate(1deg)}   }
+    @keyframes floatC { 0%,100%{transform:translateY(0) rotate(15deg)}  50%{transform:translateY(-6px) rotate(13deg)}  }
+    @keyframes floatD { 0%,100%{transform:translateY(0) rotate(12deg)}  50%{transform:translateY(-8px) rotate(10deg)}  }
+    @keyframes floatE { 0%,100%{transform:translateY(0) rotate(0deg)}   50%{transform:translateY(-7px) rotate(-1deg)}  }
+    @keyframes floatF { 0%,100%{transform:translateY(0) rotate(-15deg)} 50%{transform:translateY(-9px) rotate(-13deg)} }
+
+    .center-col { display: flex; flex-direction: column; align-items: center; }
+    .center-video-wrap {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 4px rgba(255,255,255,0.9),
+        0 0 0 8px rgba(130,180,240,0.35),
+        0 20px 50px rgba(100,160,220,0.3);
+      animation: centerGlow 4s ease-in-out infinite;
+      width: 220px; height: 300px;
+    }
+    .center-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    @keyframes centerGlow {
+      0%,100% { box-shadow: 0 0 0 4px rgba(255,255,255,.9), 0 0 0 8px rgba(130,180,240,.35), 0 20px 50px rgba(100,160,220,.3); }
+      50%     { box-shadow: 0 0 0 4px rgba(255,255,255,.95), 0 0 0 10px rgba(130,180,240,.5), 0 26px 60px rgba(100,160,220,.45); }
+    }
+    .vid-dots {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 7px; z-index: 5;
+    }
+    .vid-dot {
+      width: 9px; height: 9px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.55); cursor: pointer;
+      transition: background 0.25s, transform 0.25s; padding: 0;
+    }
+    .vid-dot.active { background: #fff; transform: scale(1.3); }
+
+    /* ===== GLASS PANEL ===== */
+    .glass-panel {
+      width: min(560px, 94vw);
+      background: rgba(255,255,255,0.62);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(255,255,255,0.9);
+      border-radius: 32px;
+      padding: 36px 40px;
+      box-shadow: 0 24px 64px rgba(100,160,220,0.18), inset 0 1px 0 rgba(255,255,255,0.95);
+      display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center;
+    }
+    .gp-date-block { display: flex; align-items: center; gap: 16px; }
+    .gp-heart { font-size: 1.5rem; }
+    .gp-date-text { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .gp-label { font-size: 0.78rem; font-weight: 700; color: #6fa3d0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .gp-date  { font-size: clamp(1.9rem,5vw,2.7rem); font-weight: 900; color: #2c5f8a; letter-spacing: 0.04em; line-height: 1; }
+    .gp-divider { width: 50%; height: 1.5px; background: linear-gradient(90deg,transparent,rgba(130,180,240,.5),transparent); }
+    .gp-cd-label { font-size: 0.88rem; font-weight: 700; color: #4a87bc; }
+    .gp-countdown { display: flex; align-items: center; gap: 6px; }
+    .cd-group { display: flex; align-items: center; gap: 6px; }
+    .cd-unit {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.75); border: 1.5px solid rgba(130,180,240,0.3);
+      border-radius: 14px; padding: 12px 16px; min-width: 64px;
+      box-shadow: 0 4px 12px rgba(100,160,220,0.1);
+    }
+    .cd-num { font-size: 1.8rem; font-weight: 900; color: #2c5f8a; line-height: 1; font-variant-numeric: tabular-nums; }
+    .cd-lbl { font-size: 0.65rem; font-weight: 700; color: #6fa3d0; letter-spacing: 0.06em; }
+    .cd-colon { font-size: 1.8rem; font-weight: 900; color: #6fa3d0; margin-bottom: 18px; line-height: 1; }
+
+    /* ===== TYPEWRITER ===== */
+    .tw-card {
+      width: min(560px, 94vw);
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255,255,255,0.95);
+      border-radius: 28px;
+      padding: 32px 36px;
+      box-shadow: 0 20px 56px rgba(100,160,220,0.16);
+      display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center;
+    }
+    .tw-header { display: flex; align-items: center; gap: 10px; }
+    .tw-icon  { font-size: 1.6rem; }
+    .tw-title { font-size: 1.1rem; font-weight: 800; color: #2c5f8a; }
+    .tw-text  {
+      font-size: 1.05rem; color: #3a6b9e; line-height: 2;
+      min-height: 80px; font-weight: 500; text-align: right; width: 100%;
+    }
+    .tw-placeholder { color: #9bbfd8; font-style: italic; }
+    .tw-cursor { display: inline-block; color: #6fa3d0; font-weight: 900; animation: blink 0.8s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .tw-btn {
+      background: linear-gradient(135deg, #6fa3d0, #4a87bc);
+      color: #fff; border: none; border-radius: 20px;
+      padding: 10px 28px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      box-shadow: 0 6px 18px rgba(74,135,188,0.3);
+    }
+    .tw-btn:hover { opacity: 0.9; transform: scale(1.04); }
+
+    /* ===== TIMELINE ===== */
+    .timeline-wrap { width: min(720px, 96vw); display: flex; flex-direction: column; align-items: center; }
+    .section-title {
+      font-size: 1.5rem; font-weight: 900; color: #2c5f8a;
+      text-shadow: 0 2px 8px rgba(255,255,255,0.8); margin-bottom: 32px; text-align: center;
+    }
+    .timeline { position: relative; width: 100%; display: flex; flex-direction: column; gap: 28px; padding: 0 16px; }
+    .tl-line {
+      position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 3px; background: linear-gradient(to bottom,rgba(130,180,240,0.2),rgba(130,180,240,0.6),rgba(130,180,240,0.2));
+      border-radius: 2px; z-index: 0;
+    }
+    .tl-item { position: relative; display: flex; align-items: center; z-index: 1; width: 100%; }
+    .tl-dot {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); border: 2.5px solid rgba(130,180,240,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; box-shadow: 0 4px 16px rgba(100,160,220,0.2); z-index: 2; flex-shrink: 0;
+    }
+    .tl-left  { justify-content: flex-start; padding-right: calc(50% + 36px); }
+    .tl-right { justify-content: flex-end;   padding-left:  calc(50% + 36px); }
+    .tl-card {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(255,255,255,0.9); border-radius: 18px;
+      padding: 16px 20px; box-shadow: 0 8px 28px rgba(100,160,220,0.14);
+      text-align: right; transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .tl-card:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(100,160,220,0.24); }
+    .tl-date  { font-size: 0.72rem; font-weight: 700; color: #6fa3d0; letter-spacing: 0.06em; display: block; margin-bottom: 4px; }
+    .tl-title-text { font-size: 0.98rem; font-weight: 800; color: #2c5f8a; margin: 0 0 6px; display: block; }
+    .tl-desc  { font-size: 0.85rem; color: #4a87bc; margin: 0; line-height: 1.6; display: block; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 680px) {
+      .arc-grid { gap: 10px; }
+      .frame-box { width: 110px; height: 110px; }
+      .frame-inner { width: 68px; height: 68px; }
+      .center-video-wrap { width: 170px; height: 230px; }
+      .glass-panel, .tw-card { padding: 24px 18px; }
+      .cd-unit { padding: 10px 11px; min-width: 52px; }
+      .cd-num { font-size: 1.4rem; }
+      .tl-line { display: none; }
+      .tl-item { justify-content: center !important; padding: 0 !important; flex-direction: row-reverse; align-items: center; gap: 10px; }
+      .tl-dot { position: static; transform: none; }
+      .tl-card { flex: 1; }
+      .music-float { bottom: 16px; left: 12px; }
+      .music-card { min-width: 180px; }
+      .intro-card { padding: 36px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== INTRO ===== -->
+  <div id="intro">
+    <div class="intro-card">
+      <p class="intro-pre">لكِ وحدكِ</p>
+      <h1 class="intro-title">ذكرى حبنا 💜</h1>
+      <button class="cloud-btn" onclick="enterMain()">
+        <span class="cb-puff cb-left"></span>
+        <span class="cb-puff cb-right"></span>
+        <span class="cb-text">اضغطي داخل الغيمة ☁️</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <div id="main">
+
+    <!-- Floating music player -->
+    <div class="music-float">
+      <div class="music-card">
+        <audio id="audio" loop src="https://cdn.pixabay.com/audio/2022/10/25/audio_236ae48edd.mp3"></audio>
+        <div class="music-header">
+          <span class="music-icon" id="music-icon">🎶</span>
+          <span class="music-title">موسيقى رومانسية</span>
+        </div>
+        <div class="music-controls">
+          <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶ تشغيل</button>
+          <div class="vol-wrap">
+            <span>🔈</span>
+            <input type="range" min="0" max="1" step="0.05" value="0.5"
+              class="vol-slider" id="vol-slider" oninput="setVolume(this.value)" />
+            <span>🔊</span>
+          </div>
+        </div>
+        <div class="music-notes" id="music-notes" style="display:none">
+          <span class="note" style="animation-delay:0s">♪</span>
+          <span class="note" style="animation-delay:0.4s">♫</span>
+          <span class="note" style="animation-delay:0.8s">♩</span>
+          <span class="note" style="animation-delay:1.2s">♬</span>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="page-title">ذكرى حبنا الجميلة 💜</h1>
+
+    <!-- Arc grid -->
+    <div class="arc-grid">
+      <div class="side-col">
+        <div class="frame-box rotate-neg-12"><img src="assets/frame1.jpg" class="frame-border" alt=""><div class="frame-inner"></div></div>
+        <div class="frame-box rotate-0-a" ><img src="assets/frame2.jpg" class="frame-border" alt=""><div class="frame-inner"></div></div>
+        <div class="frame-box rotate-pos-15"><img src="assets/frame1.jpg" class="frame-border" alt=""><div class="frame-inner"></div></div>
+      </div>
+
+      <div class="center-col">
+        <div class="center-video-wrap">
+          <video id="center-video" autoplay muted playsinline class="center-video">
+            <source src="assets/video1.mp4" type="video/mp4">
+          </video>
+          <div class="vid-dots">
+            <button class="vid-dot active" onclick="switchVideo(0)"></button>
+            <button class="vid-dot"        onclick="switchVideo(1)"></button>
+            <button class="vid-dot"        onclick="switchVideo(2)"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-col">
+        <div class="frame-box rotate-pos-12"><img src="assets/frame2.jpg" class="frame-border" alt=""><div class="frame-inner"></div></div>
+        <div class="frame-box rotate-0-b" ><img src="assets/frame1.jpg" class="frame-border" alt=""><div class="frame-inner"></div></div>
+        <div class="frame-box rotate-neg-15"><img src="assets/frame2.jpg" class="frame-border" alt=""><div class="frame-inner"></div></div>
+      </div>
+    </div>
+
+    <!-- Countdown glass -->
+    <div class="glass-panel">
+      <div class="gp-date-block">
+        <span class="gp-heart">💜</span>
+        <div class="gp-date-text">
+          <span class="gp-label">تاريخ تعارفنا</span>
+          <span class="gp-date">٢٠٢٥ / ٦ / ١١</span>
+        </div>
+        <span class="gp-heart">💜</span>
+      </div>
+      <div class="gp-divider"></div>
+      <p class="gp-cd-label">العد التنازلي حتى ذكرانا القادمة</p>
+      <div class="gp-countdown">
+        <span class="cd-group">
+          <span class="cd-unit"><span class="cd-num" id="cd-days">00</span><span class="cd-lbl">يوم</span></span>
+          <span class="cd-colon">:</span>
+        </span>
+        <span class="cd-group">
+          <span class="cd-unit"><span class="cd-num" id="cd-hours">00</span><span class="cd-lbl">ساعة</span></span>
+          <span class="cd-colon">:</span>
+        </span>
+        <span class="cd-group">
+          <span class="cd-unit"><span class="cd-num" id="cd-minutes">00</span><span class="cd-lbl">دقيقة</span></span>
+          <span class="cd-colon">:</span>
+        </span>
+        <span class="cd-group">
+          <span class="cd-unit"><span class="cd-num" id="cd-seconds">00</span><span class="cd-lbl">ثانية</span></span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Typewriter -->
+    <div class="section-gap">
+      <div class="tw-card">
+        <div class="tw-header">
+          <span class="tw-icon">💌</span>
+          <span class="tw-title">رسالة لكِ</span>
+        </div>
+        <p class="tw-text" id="tw-text" dir="rtl">
+          <span class="tw-placeholder">اضغطي لتقرئي رسالتكِ 💜</span>
+        </p>
+        <button class="tw-btn" id="tw-btn" onclick="startTypewriter()">✉️ افتحي الرسالة</button>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="section-gap">
+      <div class="timeline-wrap">
+        <h2 class="section-title">📅 لحظاتنا معاً</h2>
+        <div class="timeline">
+          <div class="tl-line"></div>
+          <div class="tl-item tl-left">
+            <div class="tl-dot">🌸</div>
+            <div class="tl-card"><span class="tl-date">٢٠٢٥/٦/١١</span><span class="tl-title-text">أول لقاء</span><span class="tl-desc">اليوم الذي بدأت فيه قصتنا الجميلة</span></div>
+          </div>
+          <div class="tl-item tl-right">
+            <div class="tl-dot">💬</div>
+            <div class="tl-card"><span class="tl-date">٢٠٢٥/٦/١٢</span><span class="tl-title-text">أول محادثة</span><span class="tl-desc">كلام ما انتهى وضحكات ما توقفت</span></div>
+          </div>
+          <div class="tl-item tl-left">
+            <div class="tl-dot">💜</div>
+            <div class="tl-card"><span class="tl-date">٢٠٢٥/٦/١٤</span><span class="tl-title-text">أول اعتراف</span><span class="tl-desc">لحظة قلت فيها كل اللي في قلبي</span></div>
+          </div>
+          <div class="tl-item tl-right">
+            <div class="tl-dot">✨</div>
+            <div class="tl-card"><span class="tl-date">٢٠٢٥/٦/٢٠</span><span class="tl-title-text">ذكرى أسبوع</span><span class="tl-desc">أسبوع كامل من السعادة والمشاعر الجميلة</span></div>
+          </div>
+          <div class="tl-item tl-left">
+            <div class="tl-dot">🎂</div>
+            <div class="tl-card"><span class="tl-date">٢٠٢٥/٧/١١</span><span class="tl-title-text">شهر كامل</span><span class="tl-desc">شهر من الذكريات الجميلة التي لا تُنسى</span></div>
+          </div>
+          <div class="tl-item tl-right">
+            <div class="tl-dot">🎉</div>
+            <div class="tl-card"><span class="tl-date">٢٠٢٦/٦/١١</span><span class="tl-title-text">ذكرى السنة الأولى</span><span class="tl-desc">سنة كاملة من الحب والتفاهم والسعادة</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#main -->
+
+  <script>
+    /* ===== INTRO ===== */
+    function enterMain() {
+      document.getElementById('intro').style.display = 'none';
+      var m = document.getElementById('main');
+      m.style.display = 'flex';
+    }
+
+    /* ===== VIDEO ===== */
+    var videos = ['assets/video1.mp4', 'assets/video2.mp4', 'assets/video3.mp4'];
+    var currentVid = 0;
+    var videoEl = document.getElementById('center-video');
+
+    videoEl.addEventListener('ended', function () {
+      switchVideo((currentVid + 1) % videos.length);
+    });
+
+    function switchVideo(idx) {
+      currentVid = idx;
+      videoEl.src = videos[idx];
+      videoEl.play();
+      document.querySelectorAll('.vid-dot').forEach(function (d, i) {
+        d.classList.toggle('active', i === idx);
+      });
+    }
+
+    /* ===== MUSIC ===== */
+    var audio = document.getElementById('audio');
+    var playing = false;
+
+    function toggleMusic() {
+      playing = !playing;
+      if (playing) {
+        audio.play().catch(function(){});
+        document.getElementById('music-btn').textContent = '⏸ إيقاف';
+        document.getElementById('music-btn').classList.add('playing');
+        document.getElementById('music-icon').textContent = '🎵';
+        document.getElementById('music-notes').style.display = '';
+      } else {
+        audio.pause();
+        document.getElementById('music-btn').textContent = '▶ تشغيل';
+        document.getElementById('music-btn').classList.remove('playing');
+        document.getElementById('music-icon').textContent = '🎶';
+        document.getElementById('music-notes').style.display = 'none';
+      }
+    }
+
+    function setVolume(v) {
+      audio.volume = parseFloat(v);
+      var pct = Math.round(parseFloat(v) * 100);
+      document.getElementById('vol-slider').style.background =
+        'linear-gradient(to right, #6fa3d0 ' + pct + '%, #d0e8f8 ' + pct + '%)';
+    }
+
+    /* ===== COUNTDOWN ===== */
+    var NEXT = new Date('2027-06-11T00:00:00').getTime();
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function updateCountdown() {
+      var diff = NEXT - Date.now();
+      if (diff < 0) diff = 0;
+      document.getElementById('cd-days').textContent    = pad(Math.floor(diff / 86400000));
+      document.getElementById('cd-hours').textContent   = pad(Math.floor((diff % 86400000) / 3600000));
+      document.getElementById('cd-minutes').textContent = pad(Math.floor((diff % 3600000) / 60000));
+      document.getElementById('cd-seconds').textContent = pad(Math.floor((diff % 60000) / 1000));
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    /* ===== TYPEWRITER ===== */
+    var MSG = 'منذ اليوم الأول اللي تعرّفت عليكِ فيه، شعرت إن قلبي وجد مكانه الصح ✨ كل يوم بيجي أحب أكثر، وكل لحظة معكِ تصبح ذكرى لا تُنسى 💜 أنتِ أجمل شيء حصلي في هذه الحياة 🌸';
+    var twIdx = 0, twTimer = null, twDone = false;
+
+    function startTypewriter() {
+      clearInterval(twTimer);
+      twIdx = 0;
+      twDone = false;
+      document.getElementById('tw-text').innerHTML = '<span class="tw-cursor">|</span>';
+      document.getElementById('tw-btn').textContent = '⏸ جاري الكتابة...';
+      twTimer = setInterval(function () {
+        twIdx++;
+        var slice = MSG.slice(0, twIdx);
+        if (twIdx >= MSG.length) {
+          document.getElementById('tw-text').textContent = slice;
+          clearInterval(twTimer);
+          twDone = true;
+          document.getElementById('tw-btn').textContent = '🔁 أعيدي القراءة';
+        } else {
+          document.getElementById('tw-text').innerHTML = slice + '<span class="tw-cursor">|</span>';
+        }
+      }, 55);
+    }
+  </script>
+</body>
+</html>
